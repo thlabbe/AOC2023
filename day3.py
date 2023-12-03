@@ -1,9 +1,9 @@
-import re
-
 file = "./input3.txt"
 # file = "./test3.txt"
 
-EMPTY_HAND = {'green': 0, 'red': 0, 'blue': 0}
+NUMBERS = ['0','1','2','3','4','5','6','7','8','9']
+DIRECTIONS = [ (-1, -1, 'NW'),(+1, -1, 'NE'),(+1, +1, 'SE'),(-1, +1, 'SW'),
+               (-1, 0, 'N'),(+1, 0, 'S'),( 0, +1, 'E'),(0, -1, 'W'),]
 
 def load():
 
@@ -51,9 +51,9 @@ def part1():
             y1 = y + dy
             c1 = read_at(x1, y1, schem)
             if c1 in NUMBERS:
-                # si x1,y1 NUMBER
+
                 n = ''
-                to_clear = []
+
                 x2 = x1
                 while read_at(x2, y1, schem) in NUMBERS:
                     x2 += 1
@@ -81,11 +81,6 @@ def load_schematic(data):
 
     return schematic
 
-NUMBERS = ['0','1','2','3','4','5','6','7','8','9']
-DIRECTIONS = [ (-1, -1, 'NW'),(+1, -1, 'NE'),(+1, +1, 'SE'),(-1, +1, 'SW'),
-               (-1, 0, 'N'),(+1, 0, 'S'),( 0, +1, 'E'),(0, -1, 'W'),]
-LEFT = ( 0, +1, 'R')
-RIGHT =(0, -1, 'L')
 def symbol_pos(table):
     coords = []
     rows = len(table)
@@ -106,10 +101,12 @@ def star_pos(table):
             res.append((x,y,car))
     return res
 
+
 def read_at(x, y, table):
     row = table[y]
     car = row[x]
     return car
+
 
 def set_at(value, x,y, table):
     s = table[y]
