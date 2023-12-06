@@ -76,4 +76,4 @@ if __name__ == '__main__':
     part1(time, dist)
     print("------")
 
-    
+
