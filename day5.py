@@ -89,21 +89,120 @@ def unionize(ranges):
             b.append([begin, end])
     return b
 
+
+def max_max(maps):
+    res = -1
+    for map in maps:
+        for x,y,z in map['ranges']:
+            res = max(res,x + z)
+            res = max(res, y + z)
+    return res
+
+
+def hash_ranges(ranges, map):
+    """ Renvoyer la liste des ranges
+    ordonnée qui en y appliquant la map donnera des résultats croissants.
+
+    expl :
+        ranges :
+            [(0,100]]
+        map :
+            50 98 2
+            52 50 48
+
+    seed  soil
+    0     0
+    1     1
+    ...   ...
+    48    48
+    49    49
+    50    52
+    51    53
+    ...   ...
+    96    98
+    97    99
+    98    50
+    99    51
+
+    =>
+    invert = [  (0, 49),
+                (98, 99),
+                (50, 97) ]
+    """
+    print(ranges)
+    new_ranges = []
+    map_src = []
+    map_dest = []
+
+    for dest, src, width in map['ranges']:
+        print('dest, src, width:',dest, src, width)
+        map_src.append((src, src + width))
+        map_dest.append(((dest, dest + width)))
+    dic = dict()
+    cid = dict()
+    for i, src in enumerate(map_src):
+        dic[map_src[i]] = map_dest[i]
+        cid[map_dest[i]] = map_src[i]
+
+    for k,v in dic.items():
+        print('dic',k,'->' ,v)
+    for k,v in cid.items():
+        print('cid',k,'->',v)
+    for i,r in enumerate(ranges):
+        s = r[0]
+        e = r[1]
+        print(i, r, s, e )
+        new_ranges = segment(r, cid)
+
+    return new_ranges
+
+def segment(r, map):
+    print("+++",r, map)
+    res = []
+    min_, max_ = r[0], r[1]
+    r_start = min_
+    r_end = min_
+    for k in map.keys():
+        print(k)
+        k_deb = k[0]
+        k_fin = k[1]
+        if k_deb > r_end:
+            res.append((r_start,k_deb))
+            r_start = k_deb + 1
+        elif k_deb > r_start :
+            if k_fin < r_start:
+                res.append((k_deb, k_fin))
+                r_start = k_fin +1
+            else:
+                res.append((k_deb, r_start))
+                r_start = r_fin + 1
+    res.append((r_start, max_ ))
+
+    print("===", res)
+    return res
+
 def part2(seeds_ranges, maps):
     # TODO : MemoryError avec le puzzle :) ( 1^10 valeurs à traiter )
-    res = 999_999_999_999
+    max = max_max(maps)
+    print("max", max ) # max = 4294967296 :D
+
+    ranges1 = (0, max)
+    ranges = [ranges1]
+    ranges2 = hash_ranges(ranges, maps[0])
+    print("***" , ranges2)
+    res = max
     pairs =[]
-    for b in range(0 ,len(seeds_ranges),2):
+    '''for b in range(0 ,len(seeds_ranges),2):
         pairs.append((seeds_ranges[b],seeds_ranges[b] + seeds_ranges[b+1]))
     pairs = unionize(pairs)
-    brute = set()
-    for p in pairs:
+    brute = set()'''
+    '''for p in pairs:
         l = [x for x in range(p[0], p[1])]
         for i in l:
             brute.add(i)
 
     for i in brute:
-        res = min(res, transform(i,maps))
+        res = min(res, transform(i,maps))'''
     return res
 
 
@@ -126,4 +225,4 @@ if __name__ == '__main__':
     seeds, maps = preprocess(data)
     # print(seeds, '\n ' , maps)
     print("part1 : ", part1(seeds, maps)) # 35 OK
-    print("part2 : ", part2(seeds, maps)) # 46 OK
+    # print("part2 : ", part2(seeds, maps)) # 46 OK
