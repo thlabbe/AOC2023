@@ -185,40 +185,38 @@ def part1(mirrors, maxis):
     beam = start
     res = score(walk(beam, mirrors, energized, maxis, 1))
     print(res)
+def empty():
+    return {'UP': [],
+            'DOWN': [],
+            'LEFT': [],
+            'RIGHT': []}
 
 def part2(mirrors, maxis):
     s = 0
-    for i in range(maxis[0]):
-        energized = {'UP': [],
-                     'DOWN': [],
-                     'LEFT': [],
-                     'RIGHT': []}
-        beam = {'pos': (i, maxis[1]), 'dir': 'UP'}
-        s = max(s, score(walk(beam, mirrors, energized, maxis, 0)))
-        print(" tmp ", s)
-        energized = {'UP': [],
-                     'DOWN': [],
-                     'LEFT': [],
-                     'RIGHT': []}
-        beam = {'pos' : (i,0), 'dir': 'DOWN'}
-        s = max(s, score(walk(beam, mirrors, energized, maxis, 0)))
-        print(" tmp ", s)
 
-    for i in range(maxis[1]):
-        energized = {'UP': [],
-                     'DOWN': [],
-                     'LEFT': [],
-                     'RIGHT': []}
+    print("maxis:",maxis)
+    for i in range(maxis[0] + 1):
+        beam = {'pos': (i, maxis[1]-1), 'dir': 'UP'}
+        s1 = score(walk(beam, mirrors, empty(), maxis, 0))
+        s = max(s, s1)
+        print(" UP  \t (", i,'\t', maxis[1]-1,')\t', s1,'\t', s)
+
+        beam = {'pos' : (i,0), 'dir': 'DOWN'}
+        s1 = score(walk(beam, mirrors, empty(), maxis, 0))
+        s = max(s, s1)
+        print(" DOWN \t (", i, '\t', 0,')\t', s1 ,'\t', s)
+
+    for i in range(maxis[1] + 1):
+        beam = {'pos': (maxis[0]-1, i), 'dir': 'LEFT'}
+        s1 = score(walk(beam, mirrors, empty(), maxis, 0))
+        s = max(s, s1)
+        print(" LEFT \t (", maxis[0]-1,'\t', i,')\t', s1,'\t', s)
+
         beam = {'pos': (0, i), 'dir': 'RIGHT'}
-        s = max(s, score(walk(beam, mirrors, energized, maxis, 0)))
-        print(" tmp ", s)
-        energized = {'UP': [],
-                     'DOWN': [],
-                     'LEFT': [],
-                     'RIGHT': []}
-        beam = {'pos': (maxis[0], i), 'dir': 'LEFT'}
-        s = max(s, score(walk(beam, mirrors, energized, maxis, 0)))
-        print(" tmp ", s)
+        s1 = score(walk(beam, mirrors, empty(), maxis, 0))
+        s = max(s, s1)
+        print(" RIGHT \t (", 0,'\t', i,')\t', s1,'\t', s)
+
     print("part2 :", s)
 
 if __name__ == '__main__':
