@@ -70,8 +70,8 @@ def dump(energized, maxis, msg=""):
     dump_mat(mat, msg)
 def pos_in_range(pos, maxis):
     res =  pos[0] >= 0 and pos[1] >= 0 and pos[0] < maxis[0] and pos[1] < maxis[1]
-    if not res :
-        print("*** out : ", pos, maxis )
+    #if not res :
+    #    print("*** out : ", pos, maxis )
     return res
 
 def bouncing(beam, mir):
@@ -135,17 +135,14 @@ def score(e):
     return len(lst)
 
 def walk(beam, mirrors, energized, maxis, cnt):
-    cnt += 1
-    print(cnt)
-    if cnt == 990:
-        print("DEBUG")
+
     if beam is None:
         return energized
     pos = beam['pos']
     dir = beam['dir']
     if not pos_in_range(pos, maxis):
         return energized
-    # print('dir' , dir)
+
     if pos in energized[dir]: # prevent loop
         return energized
 
@@ -166,7 +163,7 @@ def walk(beam, mirrors, energized, maxis, cnt):
         elif (mir in '\\/'):
             next_pos1, dir1 = bouncing(beam, mir)
         else:
-            print("split")
+            #print("split")
             next_pos1, dir1, next_pos2, dir2 = spliting(beam, mir)
     if next_pos1 is None:
         print("*** ERREUR ", beam, next_pos1, next_pos2)
@@ -189,14 +186,49 @@ def part1(mirrors, maxis):
     res = score(walk(beam, mirrors, energized, maxis, 1))
     print(res)
 
+def part2(mirrors, maxis):
+    s = 0
+    for i in range(maxis[0]):
+        energized = {'UP': [],
+                     'DOWN': [],
+                     'LEFT': [],
+                     'RIGHT': []}
+        beam = {'pos': (i, maxis[1]), 'dir': 'UP'}
+        s = max(s, score(walk(beam, mirrors, energized, maxis, 0)))
+        print(" tmp ", s)
+        energized = {'UP': [],
+                     'DOWN': [],
+                     'LEFT': [],
+                     'RIGHT': []}
+        beam = {'pos' : (i,0), 'dir': 'DOWN'}
+        s = max(s, score(walk(beam, mirrors, energized, maxis, 0)))
+        print(" tmp ", s)
+
+    for i in range(maxis[1]):
+        energized = {'UP': [],
+                     'DOWN': [],
+                     'LEFT': [],
+                     'RIGHT': []}
+        beam = {'pos': (0, i), 'dir': 'RIGHT'}
+        s = max(s, score(walk(beam, mirrors, energized, maxis, 0)))
+        print(" tmp ", s)
+        energized = {'UP': [],
+                     'DOWN': [],
+                     'LEFT': [],
+                     'RIGHT': []}
+        beam = {'pos': (maxis[0], i), 'dir': 'LEFT'}
+        s = max(s, score(walk(beam, mirrors, energized, maxis, 0)))
+        print(" tmp ", s)
+    print("part2 :", s)
+
 if __name__ == '__main__':
 
     mat, maxis = load()
-    dump_mat(mat,'start')
+    #dump_mat(mat,'start')
     mirrors= find_mirrors(mat)
     print(len(mirrors),'mirroirs')
-    part1(mirrors, maxis)
-    dump_mat(mat, 'start')
-
+    #part1(mirrors, maxis)
+    #dump_mat(mat, 'start')
+    part2(mirrors, maxis)
 
 
